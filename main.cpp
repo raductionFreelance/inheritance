@@ -1,120 +1,99 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <ctime>
 using namespace std;
 
-//3
-class Transport{
-public:
-    virtual void price() = 0;
-    virtual ~Transport() = default;
+struct Name{
+    string name, surname;
+};
+struct Address{
+    string country, region, city, street;
+    int building, appartmant;
+};
+
+struct Visa{
+    int number, numOfEntries;
+    string type, issuedIn, country;
+    tm startDay{}, endDay{};
     
 };
 
-class Auto : public Transport{
-public:
-    int t, v, s, p1k;
-    
-    Auto(const int& v, const int& s, const int& p1k) : v(v), s(s), p1k(p1k) {};
-    
-    void price() override{
-        int price = 0;
-        t = s / v;
-        price = p1k * s;
-        cout << "Your time for trip: " << t << " hours, your money, which were spent fot this one, is " << price << endl;
-    }
-};
-
-class Bike : public Transport{
-public:
-    int t, v, s, p1k;
-    
-    Bike(const int& v, const int& s, const int& p1k) : v(v), s(s), p1k(p1k) {};
-    
-    void price() override{
-        int price = 0;
-        t = s / v;
-        price = p1k * s;
-        cout << "Your time for trip: " << t << " hours, your money, which were spent fot this one, is " << price << endl;
-    }
-};
-
-class Cart : public Transport{
-public:
-    int t, v, s, p1k;
-    
-    Cart(const int& v, const int& s, const int& p1k) : v(v), s(s), p1k(p1k) {};
-    
-    void price() override{
-        int price = 0;
-        t = s / v;
-        price = p1k * s;
-        cout << "Your time for trip: " << t << " hours, your money, which were spent fot this one, is " << price << endl;
-    }
-};
-
-
-
-//1
-class Student{
+class Passport{
 private:
-    string name;
-    int age;
-    string university, faculty, specialty;
-    int course;
-    double averageMark;
+    int seriesM, dateOfBarthday, dateOfIssueM, dateOfExpiryM, taxNumber;
+    Name name;
+    Address address;
 public:
-    Student(const string& name, const int& age, const string& university, const string& faculty, const string& specialty, const int& course, const double& avarageMark) : name(name), age(age), university(university), faculty(faculty), specialty(specialty), course(course), averageMark(avarageMark) {};
+    Passport(const int& s, const int& d1, const int& d2, const int& d3, const int& t, const Name& n, const Address& a):
+    seriesM(s), dateOfBarthday(d1), dateOfIssueM(d2), dateOfExpiryM(d3), taxNumber(t), name(n), address(a) {};
     
-    virtual ~Student() = default;
-    
-    void printInfo() const {
-            cout << "Name: " << name << "\nAge: " << age << "\nUniversity: " << university
-                 << "\nFaculty: " << faculty << "\nSpecialty: " << specialty << "\nCourse: " << course
-                 << "\nAverage Mark: " << averageMark << endl;
+    void print() const {
+            cout << "=== Passport Information ===\n";
+            cout << "Series: " << seriesM << endl;
+            cout << "Name: " << name.name << " " << name.surname << endl;
+            cout << "Date of birth: " << dateOfBarthday << endl;
+            cout << "Date of issue: " << dateOfIssueM << endl;
+            cout << "Date of expiry: " << dateOfExpiryM << endl;
+            cout << "Tax number: " << taxNumber << endl;
+            cout << "Address: " << address.country << ", " << address.region << ", "
+                 << address.city << ", " << address.street << " "
+                 << address.building << "/" << address.appartmant << endl;
         }
-    
 };
 
-class Aspirant : public Student{
+class ForeignPassport : public Passport{
 private:
-    string researchTopic, supervisor, degree;
-    int publications;
+    int seriesA, dateOfIssueA, dateOfExpiryA;
+    vector<Visa> visa;
 public:
-    Aspirant(const string& name, int age, const string& university, const string& faculty, const string& specialty, int course, double averageMark, const string& researchTopic, const string& supervisor, const string& degree, int publications) : Student(name, age, university, faculty, specialty, course, averageMark), researchTopic(researchTopic), supervisor(supervisor), degree(degree), publications(publications) {};
+    ForeignPassport(const int& sA, const int& d1A, const int& d2A,
+                        const int& sM, const int& d1M, const int& d2M,
+                        const int& d3M, const int& t,
+                        const Name& n, const Address& a, const vector<Visa>& v)
+            : Passport(sM, d1M, d2M, d3M, t, n, a),
+            seriesA(sA), dateOfIssueA(d1A), dateOfExpiryA(d2A), visa(v) {};
     
-    void printInfo() const {
-            Student::printInfo();
-            cout << "Research Topic: " << researchTopic << "\nSupervisor: " << supervisor
-                 << "\nDegree: " << degree << "\nPublications: " << publications << endl;
+    void print() const {
+            cout << "\n=== Foreign Passport Information ===\n";
+            Passport::print();
+            cout << "Foreign passport series: " << seriesA << endl;
+            cout << "Foreign passport issue date: " << dateOfIssueA << endl;
+            cout << "Foreign passport expiry date: " << dateOfExpiryA << endl;
+
+            for (size_t i = 0; i < visa.size(); i++) {
+                cout << "\n--- Visa #" << (i + 1) << " ---\n";
+                cout << "Number: " << visa[i].number << endl;
+                cout << "Available entries: " << visa[i].numOfEntries << endl;
+                cout << "Type: " << visa[i].type << endl;
+                cout << "Issued in: " << visa[i].issuedIn << endl;
+                cout << "Country: " << visa[i].country << endl;
+
+                cout << "Valid from: " << visa[i].startDay.tm_mday << "."
+                     << visa[i].startDay.tm_mon + 1 << "."
+                     << visa[i].startDay.tm_year + 1900 << endl;
+
+                cout << "Valid until: " << visa[i].endDay.tm_mday << "."
+                     << visa[i].endDay.tm_mon + 1 << "."
+                     << visa[i].endDay.tm_year + 1900 << endl;
+            }
         }
 };
 
 
 
 int main() {
-    Transport* bike = new Bike(15, 30, 0);
-    Transport* car = new Auto(90, 1000, 2);
-    Transport* cart = new Cart(10, 30, 1);
-    
-    bike->price();
-    car->price();
-    cart->price();
-    
-    delete bike;
-    delete car;
-    delete cart;
-    
-    Student s1("Ivan Ivanov", 20, "Kyiv University", "Computer Science", "Software Engineering", 2, 4.5);
-    Aspirant a1("Olena Petrenko", 24, "Kyiv University", "Physics", "Quantum Mechanics", 1, 4.8, "Quantum Computing", "Dr. Shevchenko", "PhD", 3);
+    Name n = {"Ivan", "Petrov"};
+    Address a = {"Ukraine", "Kyiv region", "Kyiv", "Khreshchatyk", 10, 5};
 
-    cout << "---Student Info---" << endl;
-    s1.printInfo();
+    tm start1 = {0, 0, 0, 12, 5, 125};
+    tm end1 = {0, 0, 0, 12, 5, 126};
 
-    cout << "\n---Aspirant Info---" << endl;
-    a1.printInfo();
+    Visa v1 = {12345, 2, "Tourist", "Kyiv", "France", start1, end1};
+    vector<Visa> visas = {v1};
 
-    return 0;
-    
+    ForeignPassport fp(9999, 2022, 2032, 1111, 1999, 2015, 2025, 987654, n, a, visas);
+    fp.print();
 
     return 0;
 }
